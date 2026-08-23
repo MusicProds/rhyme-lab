@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rhyme Lab</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>RHYME LAB</h1>
+      <p class="subtitle">Идеи для трека · рифмы · зацепки</p>
+    </header>
+
+    <!-- Блок 1: Идея трека -->
+    <section class="card">
+      <h2>🎵 Идея трека</h2>
+      <div class="row">
+        <div class="field">
+          <label for="bpmInput">BPM</label>
+          <input type="text" id="bpmInput" placeholder="Random">
+        </div>
+        <div class="field">
+          <label for="moodSelect">НАСТРОЕНИЕ</label>
+          <select id="moodSelect">
+            <option value="random">Random</option>
+            <option value="mellow">Mellow / Грустный</option>
+            <option value="aggressive">Aggressive / Мрачный</option>
+
+            <option value="energetic">Energetic / Качовый</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="keywordsInput">ОСНОВНЫЕ СЛОВА</label>
+        <input type="text" id="keywordsInput" placeholder="например: ночь, машина, девушка">
+      </div>
+      <button id="generateIdeaBtn" class="btn">GENERATE</button>
+      <div id="ideaOutput" class="output-box hidden"></div>
+    </section>
+
+    <!-- Блок 2: Рифмы -->
+    <section class="card">
+      <h2>abc Рифмы</h2>
+      <div class="field">
+        <label for="wordInput">СЛОВО</label>
+        <input type="text" id="wordInput" placeholder="например: ночь">
+      </div>
+      <button id="findRhymesBtn" class="btn">FIND RHYMES</button>
+      <div id="rhymesOutput" class="output-box hidden"></div>
+    </section>
+
+    <footer>RHYME LAB - MVP</footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
