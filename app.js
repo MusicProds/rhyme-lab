@@ -1,22 +1,19 @@
-// 1. Настройки API Groq
-// Вставь свой ключ вместо 'ВСТАВЬ_СЮДА_СВОЙ_КЛЮЧ_GROQ'
-const GROQ_API_KEY = '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'; 
-const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+// 1. Worker Proxy URL
+const PROXY_URL = 'https://rapid-bar-6445.yghostboyo-222.workers.dev';
 const MODEL_NAME = 'llama-3.3-70b-versatile';
 
-// 2. Инициализация Telegram WebApp
+// 2. Initialization of Telegram WebApp
 if (window.Telegram && window.Telegram.WebApp) {
   window.Telegram.WebApp.ready();
   window.Telegram.WebApp.expand();
 }
 
-// 3. Базовая функция обращения к AI
-async function callGroqAPI(systemPrompt, userPrompt) {
-  const response = await fetch(API_URL, {
+// 3. Basic function for accessing AI via Proxy
+async function callGroqApi(systemPrompt, userPrompt) {
+  const response = await fetch(PROXY_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROQ_API_KEY}`
     },
     body: JSON.stringify({
       model: MODEL_NAME,
@@ -29,14 +26,14 @@ async function callGroqAPI(systemPrompt, userPrompt) {
   });
 
   if (!response.ok) {
-    throw new Error(`Ошибка API: ${response.status}`);
+    throw new Error(`API error: ${response.status}`);
   }
 
   const data = await response.json();
   return data.choices[0].message.content;
 }
 
-// 4. Логика Генератора Идей
+// 4. Logic of the Idea generator
 document.getElementById('generateIdeaBtn').addEventListener('click', async () => {
   const bpm = document.getElementById('bpmInput').value || 'Random';
   const mood = document.getElementById('moodSelect').value;
@@ -44,58 +41,47 @@ document.getElementById('generateIdeaBtn').addEventListener('click', async () =>
   const output = document.getElementById('ideaOutput');
 
   output.classList.remove('hidden');
-  output.textContent = '⏳ Генерирую концепт...';
+  output.textContent = '⏳ Generating concept...';
 
-  const systemPrompt = `Ты — рэп-продюсер и гострайтер. Твоя задача — придумать цепляющий концепт трека.
-Выдай результат строго в формате:
-🔥 НАЗВАНИЕ ТРЕКА: [Название]
-💡 5 СТАРТОВЫХ ЗАЦЕПОК:
-1. [Строчка 1]
-2. [Строчка 2]
-3. [Строчка 3]
-4. [Строчка 4]
-5. [Строчка 5]`;
+  const systemPrompt = `You are a rap producer and ghostwriter. Your task is to come up with an eye-catching track concept. Output the result strictly in the format:
+🎵 TRACK TITLE: [Title]
+💡 5 STARTING POINTS:
+1. [Line 1]
+2. [Line 2]
+3. [Line 3]
+4. [Line 4]
+5. [Line 5]`;
 
-  const userPrompt = `BPM: ${bpm}, Настроение: ${mood}, Ключевые слова: ${keywords}.`;
+  const userPrompt = `BPM: ${bpm}, Mood: ${mood}, Keywords: ${keywords}`;
 
   try {
-    const result = await callGroqAPI(systemPrompt, userPrompt);
+    const result = await callGroqApi(systemPrompt, userPrompt);
     output.textContent = result;
-  } catch (error) {
-    output.textContent = '❌ Ошибка при генерации. Проверь API-ключ.';
-    console.error(error);
+  } catch (err) {
+    output.textContent = `❌ Ошибка: ${err.message}`;
   }
 });
 
-// 5. Логика Неквадратных Рифм
+// 5. Logic of the Rhyme generator
 document.getElementById('findRhymesBtn').addEventListener('click', async () => {
-  const word = document.getElementById('wordInput').value.trim();
+  const word = document.getElementById('wordInput').value;
   const output = document.getElementById('rhymesOutput');
 
   if (!word) {
-    alert('Введи слово для поиска рифм!');
+    alert('Введите слово для поиска рифм');
     return;
   }
 
   output.classList.remove('hidden');
-  output.textContent = '⏳ Ищу созвучия и ассонансы...';
+  output.textContent = '⏳ Searching rhymes...';
 
-  const systemPrompt = `Ты — хип-хоп лирик. Твоя задача — подобрать НЕКВАДРАТНЫЕ, сложные и свежие рифмы к слову.
-ИЗБЕГАЙ банальных точных рифм (например: ночь -> дочь/прочь).
-Используй ассонансы, созвучия по ударным гласным, сдвиги ударений и сложные фонетические комбинации.
-
-Разбей ответ на категории:
-✨ Ассонансы и созвучия (словосочетания или фразы)
-🎯 Грамматические смещения / Неквадратные слова
-🔥 Двойные / Сложные рифмы`;
-
-  const userPrompt = `Подбери неквадратные рифмы к слову: "${word}"`;
+  const systemPrompt = `You are a rhyming dictionary for hip-hop artists. Provide a list of rich, creative rhymes for the given word in Russian or English (match the input language). Group them by type (exact, slant, multi-syllable). Keep explanations minimal.`;
+  const userPrompt = `Find rhymes for the word: "${word}"`;
 
   try {
-    const result = await callGroqAPI(systemPrompt, userPrompt);
+    const result = await callGroqApi(systemPrompt, userPrompt);
     output.textContent = result;
-  } catch (error) {
-    output.textContent = '❌ Ошибка при поиске рифм. Проверь API-ключ.';
-    console.error(error);
+  } catch (err) {
+    output.textContent = `❌ Ошибка: ${err.message}`;
   }
 });
